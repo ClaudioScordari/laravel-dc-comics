@@ -53,7 +53,27 @@ class ComicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $inputDatas = $request->all();
+        // dd($inputDatas);
+
+        // Creo un'altra istanza con i dati dell'input
+        $comic = new Comic();   
+        $comic->title = $inputDatas['title'];
+        $comic->description = $inputDatas['description'];
+        $comic->thumb = $inputDatas['src'];
+        $comic->price = $inputDatas['price'];
+        $comic->series = $inputDatas['series'];
+        $comic->sale_date = $inputDatas['sale_date'];
+        $comic->type = $inputDatas['type'];
+
+        // Artisti
+        $comic->artists = str_replace(',', ' | ', $inputDatas['artists']);
+
+        // Writers
+        $comic->writers = str_replace(',', ' | ', $inputDatas['writers']);
+
+        $comic->save();
+        return redirect()->route('comics.show', ['comic' => $comic->id]);
     }
     /* 
         ------------ ENDCREATE ------------ 
