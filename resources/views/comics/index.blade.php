@@ -22,7 +22,16 @@
                     <h5 class="card-title">{{ $comic->title }}</h5>
                     <p class="card-text">{{ $comic->description }}</p>
                     <h6 class="my-3">${{ $comic->price }}</h6>
-                    <a href="{{ route('comics.show', ['comic' => $comic->id]) }}" class="btn btn-primary w-100">Vedi</a>
+                    <a href="{{ route('comics.show', ['comic' => $comic->id]) }}" class="btn btn-primary w-100 mb-3">Vedi</a>
+                    <a href="{{ route('comics.edit', ['comic' => $comic->id]) }}" class="btn btn-warning w-100 mb-3">Modifica</a>
+                    {{-- Piccolo form che cancella --}}
+                    <form action="{{ route('comics.destroy', ['comic' => $comic->id]) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger w-100">
+                            Elimina
+                        </button>
+                    </form>
                 </div>
             </div>
         @endforeach
