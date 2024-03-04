@@ -10,6 +10,19 @@ use App\Models\Comic;
 
 class ComicController extends Controller
 {   
+    // Validazine Backend
+    private static $validRules = [
+        'title'         => 'required|unique:comics|max:64', 
+        'description'   => 'nullable|max:4096', 
+        'src'           => 'nullable|max:1024|url', 
+        'price'         => 'required|numeric', 
+        'series'        => 'required|max:64', 
+        'sale_date'     => 'nullable|date', 
+        'type'          => 'required|max:32', 
+        'artists'       => 'nullable|max:1024', 
+        'writers'       => 'nullable|max:1024', 
+    ];
+
     /* 
         ----------- READ ------------
     */
@@ -53,24 +66,25 @@ class ComicController extends Controller
      */
     public function store(Request $request)
     {
-        $inputDatas = $request->all();
-        // dd($inputDatas);
+        $validDatas = $request->validate(self::$validRules);
+
+        // dd($validDatas);
 
         // Creo un'altra istanza con i dati dell'input
         $comic = new Comic();   
-        $comic->title = $inputDatas['title'];
-        $comic->description = $inputDatas['description'];
-        $comic->thumb = $inputDatas['src'];
-        $comic->price = $inputDatas['price'];
-        $comic->series = $inputDatas['series'];
-        $comic->sale_date = $inputDatas['sale_date'];
-        $comic->type = $inputDatas['type'];
+        $comic->title = $validDatas['title'];
+        $comic->description = $validDatas['description'];
+        $comic->thumb = $validDatas['src'];
+        $comic->price = $validDatas['price'];
+        $comic->series = $validDatas['series'];
+        $comic->sale_date = $validDatas['sale_date'];
+        $comic->type = $validDatas['type'];
 
         // Artisti
-        $comic->artists = str_replace(',', ' | ', $inputDatas['artists']);
+        $comic->artists = str_replace(',', ' | ', $validDatas['artists']);
 
         // Writers
-        $comic->writers = str_replace(',', ' | ', $inputDatas['writers']);
+        $comic->writers = str_replace(',', ' | ', $validDatas['writers']);
 
         $comic->save();
         return redirect()->route('comics.show', ['comic' => $comic->id]);
@@ -98,17 +112,18 @@ class ComicController extends Controller
     public function update(Request $request, string $id)
     {
         $comic = Comic::find($id); 
-        $datasModified = $request->all();
 
-        $comic->title = $datasModified['title'];
-        $comic->description = $datasModified['description'];
-        $comic->thumb = $datasModified['src'];
-        $comic->price = $datasModified['price'];
-        $comic->series = $datasModified['series'];
-        $comic->sale_date = $datasModified['sale_date'];
-        $comic->type = $datasModified['type'];
-        $comic->artists = str_replace(',', ' | ', $datasModified['artists']);
-        $comic->writers = str_replace(',', ' | ', $datasModified['writers']);
+        $validDatas = $request->validate(self::$validRules);
+
+        $comic->title = $validDatas['title'];
+        $comic->description = $validDatas['description'];
+        $comic->thumb = $validDatas['src'];
+        $comic->price = $validDatas['price'];
+        $comic->series = $validDatas['series'];
+        $comic->sale_date = $validDatas['sale_date'];
+        $comic->type = $validDatas['type'];
+        $comic->artists = str_replace(',', ' | ', $validDatas['artists']);
+        $comic->writers = str_replace(',', ' | ', $validDatas['writers']);
         $comic->save();
         return redirect()->route('comics.show', ['comic' => $comic->id]); 
     }
